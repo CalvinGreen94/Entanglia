@@ -175,7 +175,7 @@ function App() {
               <div className="glass-card">
                 <h1 className="app-title">ENTANGLIA 💫</h1>
                 <p className="app-description">
-                  Welcome to The ENTANGLIA MVP:<strong>Entanglia</strong> is a neural matchmaking engine powered by quantum entanglement, Deep Learning, and Solana. <br />
+                  Welcome to the ENTANGLIA MVP:<strong>Entanglia</strong> is a neural matchmaking engine powered by quantum entanglement, Deep Learning, and Solana. <br />
                   🧠 Upload your Age, an Image of yourself, connect your wallet, and get matched with others in real-time. <br />
                   🌐 No personal data stored — only encrypted signatures and emergent predictions.
                 </p>
