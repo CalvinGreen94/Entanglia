@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
@@ -119,7 +119,7 @@ function App() {
             image_base64: imageBase64,
             nearby_places: nearby,
             wallet_address: walletAddress,
-            
+
           },
         },
         id: 1,
@@ -174,7 +174,11 @@ function App() {
 
               <div className="glass-card">
                 <h1 className="app-title">ENTANGLIA 💫</h1>
-
+                <p className="app-description">
+                  <strong>Entanglia</strong> is a neural matchmaking engine powered by quantum simulation, AI, and blockchain. <br />
+                  🧠 Upload your traits, connect your wallet, and get matched with others in real-time. <br />
+                  🌐 No personal data stored — only encrypted signatures and emergent predictions.
+                </p>
                 <input className="input" placeholder="🧠 Enter Your Quantum Alias" value={name} onChange={(e) => setName(e.target.value)} />
                 <input className="input" placeholder="🔢 Traits (comma-separated numbers)" value={traits} onChange={(e) => setTraits(e.target.value)} />
 
@@ -229,11 +233,13 @@ function App() {
                   )}
                   {matches.map((match, idx) => (
                     <div key={idx} className="match-card">
-                      <img src={match.image_url} alt={match.name} className="match-img" />
-                     
+                      <img
+                        src={match.image_url}
+                        alt={match.name}
+                        className="match-img"
+                      />
                       <h3>{match.name}</h3>
-                      
-                       {/* Entanglia Balance: {match.token_balance}
+                      {/* Entanglia Balance: {match.token_balance}
 
                       {/* <h3>QUANTUM SAFE PUBLIC KEY: {match.public_key}</h3>
                       // Entanglia Balance: {match.token_balance}
@@ -242,17 +248,17 @@ function App() {
                         <p>🔐 Verified Signature: <code>{match.pq_signature}</code></p>
                       )} */}
 
-                
+
                       <p>💖 Score: {match.score.toFixed(2)}</p>
                       <p>🤖 AI Contribution: {match.keras_contribution.toFixed(2)}</p>
                       <p>🧠 Quantum Contribution: {match.quantum_contribution.toFixed(2)}</p>
                       <p>🔮 Final Prediction: {match.final_prediction.toFixed(2)}</p>
-                      {match.match_scenario && (
+                      <span>{match.match_scenario && (
                         <div className="match-scenario">
                           <h4>Scenario:</h4>
                           <p>{match.match_scenario}</p>
                         </div>
-                      )}
+                      )}</span>
                     </div>
                   ))}
 
