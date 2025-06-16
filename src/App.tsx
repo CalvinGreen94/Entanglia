@@ -170,7 +170,7 @@ function App() {
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <div className="app-container">
-              <WalletConnectButton />
+              
 
               <div className="glass-card">
                 <h1 className="app-title">ENTANGLIA 💫</h1>
@@ -179,6 +179,7 @@ function App() {
                   🧠 Upload your Age, an Image of yourself, connect your wallet, and get matched with others in real-time. <br />
                   🌐 No personal data stored — only encrypted signatures and emergent predictions.
                 </p>
+                <WalletConnectButton />
                 <input className="input" placeholder="🧠 Enter Your Quantum Alias" value={name} onChange={(e) => setName(e.target.value)} />
                 <input className="input" placeholder="🔢 Traits (comma-separated numbers)" value={traits} onChange={(e) => setTraits(e.target.value)} />
 
@@ -253,11 +254,12 @@ function App() {
                       <p>🤖 AI Contribution: {match.keras_contribution.toFixed(2)}</p>
                       <p>🧠 Quantum Contribution: {match.quantum_contribution.toFixed(2)}</p>
                       <p>🔮 Final Prediction: {match.final_prediction.toFixed(2)}</p>
+                      
                       <span>{match.match_scenario && (
-                        <div className="match-scenario">
+                        <p className="app-description">
                           <h4>Scenario:</h4>
                           <p>{match.match_scenario}</p>
-                        </div>
+                        </p>
                       )}</span>
                     </div>
                   ))}
