@@ -45,8 +45,9 @@ function App() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [destinations, setDestinations] = useState<Destination[]>([]);
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const { connected, publicKey } = useWallet();
+
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
   console.log('Wallet connected?', connected);
   console.log('Public Key:', publicKey ? publicKey.toBase58() : 'Not connected');
   useEffect(() => {
@@ -109,7 +110,7 @@ function App() {
       const nearby = await fetchNearbyDestinations();
       setDestinations(nearby);
 
-      const response = await axios.post('https://e669-2600-4040-16df-2100-fd75-5e1-d8e7-ff7f.ngrok-free.app/', {
+      const response = await axios.post('https://9262-2600-4040-16df-2100-35f0-640-a450-fc71.ngrok-free.app', {
         jsonrpc: '2.0',
         method: 'register_user',
         params: {
@@ -144,7 +145,7 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://e669-2600-4040-16df-2100-fd75-5e1-d8e7-ff7f.ngrok-free.app/', {
+      const response = await axios.post('https://9262-2600-4040-16df-2100-35f0-640-a450-fc71.ngrok-free.app', {
         jsonrpc: '2.0',
         method: 'get_matches',
         params: { data: { user_id: userId } },
