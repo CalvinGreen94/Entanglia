@@ -110,7 +110,7 @@ function App() {
       const nearby = await fetchNearbyDestinations();
       setDestinations(nearby);
 
-      const response = await axios.post('https://9262-2600-4040-16df-2100-35f0-640-a450-fc71.ngrok-free.app', {
+      const response = await axios.post('https://a3cf-2600-4040-16df-2100-200b-7c55-aa4-47f4.ngrok-free.app', {
         jsonrpc: '2.0',
         method: 'register_user',
         params: {
@@ -145,7 +145,7 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://9262-2600-4040-16df-2100-35f0-640-a450-fc71.ngrok-free.app', {
+      const response = await axios.post('https://a3cf-2600-4040-16df-2100-200b-7c55-aa4-47f4.ngrok-free.app', {
         jsonrpc: '2.0',
         method: 'get_matches',
         params: { data: { user_id: userId } },
