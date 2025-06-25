@@ -178,12 +178,12 @@ function App() {
                 <h1 className="app-title">ENTANGLIA 💫</h1>
                 <p className="app-description">
                   Welcome to the ENTANGLIA MVP:<strong>Entanglia</strong> is a neural matchmaking engine powered by quantum entanglement, Deep Learning, and Solana. <br />
-                  🧠 Upload your Age, an Image of yourself, connect your wallet, and get matched with others in real-time. <br />
+                  🧠 Enter a description of yourself, an Image of yourself, connect your wallet, and get matched with others in real-time. <br />
                   🌐 No personal data stored — only encrypted signatures and emergent predictions.
                 </p>
                 <WalletConnectButton />
                 <input className="input" placeholder="🧠 Enter Your Quantum Alias" value={name} onChange={(e) => setName(e.target.value)} />
-                <input className="input" placeholder="🔢 Traits (comma-separated numbers)" value={traits} onChange={(e) => setTraits(e.target.value)} />
+                <input className="input" placeholder="🔢 Enter a description of yourself" value={traits} onChange={(e) => setTraits(e.target.value)} />
 
                 <input
                   className="input-file"
