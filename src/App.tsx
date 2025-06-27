@@ -8,7 +8,7 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 import WalletConnectButton from './components/connectWallet';
 import { useWallet } from '@solana/wallet-adapter-react';
-// import { useWallet } from '@solana/wallet-adapter-react';
+import ChatWrapper from './components/ChatWrapper';
 
 const wallets = [new SolflareWalletAdapter(), new PhantomWalletAdapter()];
 
@@ -23,12 +23,9 @@ interface Match {
   match_scenario?: string;
   pq_signature?: string;
   token_balance?: string;
-  bio?:string;
-  // quantum_metadata?: {
-  //   signature_valid?: boolean;
-  //   timestamp?: string;
-  //   // additional_info?: string;
-  // };
+  bio?: string;
+  chat_token?: string;
+  user_id: string;
 }
 
 interface Destination {
@@ -47,10 +44,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const { connected, publicKey } = useWallet();
-
+  const [chatToken, setChatToken] = useState('');
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
+
   console.log('Wallet connected?', connected);
   console.log('Public Key:', publicKey ? publicKey.toBase58() : 'Not connected');
+
   useEffect(() => {
     if (publicKey) {
       setWalletAddress(publicKey.toBase58());
@@ -58,6 +58,7 @@ function App() {
       setWalletAddress(null);
     }
   }, [publicKey]);
+
   const fetchNearbyDestinations = async (): Promise<Destination[]> => {
     try {
       const geoResponse = await axios.get('https://ipgeolocation.abstractapi.com/v1/?api_key=4a3be91d576f4c68aef4223a52eaa8ae');
@@ -97,6 +98,7 @@ function App() {
 
   const registerUser = async () => {
     if (!name || !traits || !imageBase64) {
+      // You can uncomment validations if desired
       // if (!walletAddress) {
       //   alert('Please connect your wallet first.');
       //   return;
@@ -111,7 +113,7 @@ function App() {
       const nearby = await fetchNearbyDestinations();
       setDestinations(nearby);
 
-      const response = await axios.post('https://85bb-2600-4040-15d1-f600-24ce-8055-707e-4390.ngrok-free.app', {
+      const response = await axios.post('http://192.168.1.174:8000', {
         jsonrpc: '2.0',
         method: 'register_user',
         params: {
@@ -121,7 +123,6 @@ function App() {
             image_base64: imageBase64,
             nearby_places: nearby,
             wallet_address: walletAddress,
-
           },
         },
         id: 1,
@@ -129,6 +130,7 @@ function App() {
 
       if (response.data?.result?.user_id) {
         setUserId(response.data.result.user_id);
+        setChatToken(response.data.result.chat_token);
         console.log("✅ Registered userId:", response.data.result.user_id);
       } else {
         console.error('❌ Failed to register user:', response.data);
@@ -146,7 +148,7 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://85bb-2600-4040-15d1-f600-24ce-8055-707e-4390.ngrok-free.app', {
+      const response = await axios.post('http://192.168.1.174:8000', {
         jsonrpc: '2.0',
         method: 'get_matches',
         params: { data: { user_id: userId } },
@@ -172,8 +174,6 @@ function App() {
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <div className="app-container">
-
-
               <div className="glass-card">
                 <h1 className="app-title">ENTANGLIA 💫</h1>
                 <p className="app-description">
@@ -182,8 +182,18 @@ function App() {
                   🌐 No personal data stored — only encrypted signatures and emergent predictions.
                 </p>
                 <WalletConnectButton />
-                <input className="input" placeholder="🧠 Enter Your Quantum Alias" value={name} onChange={(e) => setName(e.target.value)} />
-                <input className="input" placeholder="🔢 Enter a description of yourself" value={traits} onChange={(e) => setTraits(e.target.value)} />
+                <input
+                  className="input"
+                  placeholder="🧠 Enter Your Quantum Alias"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                  className="input"
+                  placeholder="🔢 Enter a description of yourself"
+                  value={traits}
+                  onChange={(e) => setTraits(e.target.value)}
+                />
 
                 <input
                   className="input-file"
@@ -203,10 +213,22 @@ function App() {
 
                 <div className="btn-group">
                   <button className="btn" onClick={registerUser}>🚀 Register</button>
-                  {userId && <button className="btn secondary" onClick={getMatches} disabled={loading}>🧬 Find Matches</button>}
+                  {userId && (
+                    <button
+                      className="btn secondary"
+                      onClick={getMatches}
+                      disabled={loading}
+                    >
+                      🧬 Find Matches
+                    </button>
+                  )}
                 </div>
 
-                {loading && <div className="loader-container"><div className="spinner"></div></div>}
+                {loading && (
+                  <div className="loader-container">
+                    <div className="spinner"></div>
+                  </div>
+                )}
 
                 <div className="matches">
                   {destinations.length > 0 && (
@@ -215,10 +237,10 @@ function App() {
                       <ul className="destinations-list">
                         {destinations.map((dest, idx) => (
                           <li key={idx}>
-                            <span className="dest-name">{dest.name}</span>
-                            <span className="dest-kind">({dest.kind})</span>
+                            <span className="dest-name">{dest.name}</span>{' '}
+                            <span className="dest-kind">({dest.kind})</span>{' '}
                             <span className="dest-coords">
-                              {dest.lat.toFixed(2)}, {dest.lon.toFixed(2)}
+                              {dest.lat.toFixed(2)}, {dest.lon.toFixed(2)}{' '}
                               <a
                                 href={`https://www.google.com/maps?q=${dest.lat},${dest.lon}`}
                                 target="_blank"
@@ -231,25 +253,17 @@ function App() {
                           </li>
                         ))}
                       </ul>
-
                     </div>
                   )}
+
                   {matches.map((match, idx) => (
-                    <div key={idx} className="match-card">
-                      <img
-                        src={match.image_url}
-                        alt={match.name}
-                        className="match-img"
-                      />
-
-                      {/* Entanglia Balance: {match.token_balance}
-
-                      {/* <h3>QUANTUM SAFE PUBLIC KEY: {match.public_key}</h3>
-                      // Entanglia Balance: {match.token_balance}
-
-                      {match.pq_signature && (
-                        <p>🔐 Verified Signature: <code>{match.pq_signature}</code></p>
-                      )} */}
+                    <div
+                      key={idx}
+                      className="match-card"
+                      onClick={() => setSelectedMatch(match)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <img src={match.image_url} alt={match.name} className="match-img" />
 
                       <div className="match-info">
                         <p>User Information: {match.bio}</p>
@@ -261,13 +275,20 @@ function App() {
                         {match.match_scenario && (
                           <p className="scenario-text">📝 {match.match_scenario}</p>
                         )}
+
+                        {selectedMatch && chatToken && selectedMatch.user_id === match.user_id && (
+                          <div style={{ marginTop: '2rem' }}>
+                            <h2>💬 Chat with {selectedMatch.name}</h2>
+                            <ChatWrapper
+                              currentUserId={userId}
+                              currentUserToken={chatToken}
+                              otherUserId={selectedMatch.user_id}
+                            />
+                          </div>
+                        )}
                       </div>
-
-
                     </div>
                   ))}
-
-
                 </div>
               </div>
             </div>
