@@ -3,7 +3,7 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { PublicKey, Keypair } from '@solana/web3.js';
 import '@solana/wallet-adapter-react-ui/styles.css';
-import { Transaction, SystemProgram } from "@solana/web3.js";
+import {  SystemProgram } from "@solana/web3.js";
 import { createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
 import { TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import {
@@ -11,7 +11,7 @@ import {
   getMinimumBalanceForRentExemptMint,
   MINT_SIZE,
 } from "@solana/spl-token";
-import { mintTo, createMintToInstruction } from '@solana/spl-token';
+import {  createMintToInstruction } from '@solana/spl-token';
 
 interface CreateTokenParams {
   connection: any;
@@ -68,7 +68,6 @@ export async function sendLocalCreateTx({
       publicKey, // owner
       mint
     );
-    const decimals = 9; // Example: 9 decimals means token amounts are in lamports (like SOL)
     const mintAmount = 1_000_000_000; // This will mint 1 token (because of 9 decimals)
     // STEP 3: Send transaction to create mint + initialize + create ATA
     const mintToIx = createMintToInstruction(

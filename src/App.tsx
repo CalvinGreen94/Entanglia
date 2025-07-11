@@ -9,37 +9,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import WalletConnectButton from './components/connectWallet';
 import { useWallet } from '@solana/wallet-adapter-react';
 import ChatWrapper from './components/ChatWrapper';
-import { useConnection } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { PublicKey, Transaction, SystemProgram, Keypair } from '@solana/web3.js';
-import {
-  TOKEN_PROGRAM_ID,
-  createInitializeMintInstruction,
-  createMintToInstruction,
-  getAssociatedTokenAddress,
-  createAssociatedTokenAccountInstruction,
-} from '@solana/spl-token';
-
-import {
-
-  TransactionInstruction,
-  ComputeBudgetProgram,
-  TransactionMessage, VersionedTransaction
-} from "@solana/web3.js";
-import { Connection } from "@solana/web3.js";
-import { createMint, getOrCreateAssociatedTokenAccount, mintTo, createCloseAccountInstruction, createTransferCheckedInstruction } from "@solana/spl-token";
-import { sendAndConfirmTransaction } from "@solana/web3.js";
-
-import assert from 'assert';
-import { getMint } from '@solana/spl-token';
-
-
-
-
-import * as spl from "@solana/spl-token";
-import { createBurnCheckedInstruction, TOKEN_2022_PROGRAM_ID, } from "@solana/spl-token";
-// import { swapie } from './swap'
-import bs58 from "bs58";
 
 // const CONNECTION = new Connection(RPC_ENDPOINT, {
 // 	commitment: providerOptions.commitment,
@@ -91,22 +60,17 @@ function App() {
   const [selectedDateTime, setSelectedDateTime] = useState('');
 
 
-  const { connection } = useConnection();
-  const { connected, publicKey, sendTransaction, disconnect } = useWallet();
+  const {  publicKey } = useWallet();
 
-  const [mintAddress, setMintAddress] = useState<string | null>(null);
-  const [tokenAccountAddress, setTokenAccountAddress] = useState<string | null>(null);
-  const [mintSupply, setMintSupply] = useState<string | null>(null);
-  const [tokenAccountBalance, setTokenAccountBalance] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
 
 
   useEffect(() => {
     if (publicKey) {
+      
       setWalletAddress(publicKey.toBase58());
     } else {
-      setWalletAddress(null);
+      setWalletAddress(walletAddress);
     }
   }, [publicKey]);
 
@@ -147,6 +111,7 @@ function App() {
 
       return extracted;
     } catch (error) {
+      selectedDestination
       console.error('Geolocation or Overpass API failed:', error);
       return [];
     }
@@ -169,7 +134,7 @@ function App() {
       const nearby = await fetchNearbyDestinations();
       setDestinations(nearby);
 
-      const response = await axios.post('http://192.168.1.174:8000', {
+      const response = await axios.post('http://0.0.0.0::8000', {
         jsonrpc: '2.0',
         method: 'register_user',
         params: {
@@ -205,7 +170,7 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await axios.post('http://192.168.1.174:8000', {
+      const response = await axios.post('http://0.0.0.0:8000', {
         jsonrpc: '2.0',
         method: 'get_matches',
         params: { data: { user_id: userId } },
@@ -240,8 +205,9 @@ function App() {
               <div className="glass-card">
                 <h1 className="app-title">ENTANGLIA 💫</h1>
                 <p className="app-description">
-                  Entanglia: The first matchmaking engine blending neural networks, quantum predictions & Solana. Find synergy, not swipes.
-                </p>
+                Welcome to the ENTANGLIA MVP:Entanglia is a neural matchmaking engine powered by quantum entanglement, Deep Learning, and Solana.
+🧠 Enter a description of yourself, an Image of yourself, connect your wallet, and get matched with others in real-time.
+🌐 No personal data stored — only encrypted signatures and emergent predictions.                </p>
                 
 
                 <WalletConnectButton />
