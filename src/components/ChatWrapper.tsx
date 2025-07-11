@@ -53,6 +53,7 @@ const ChatWrapper: React.FC<Props> = ({
       await newChannel.watch();
       setChannel(newChannel);
       setClientReady(true);
+      setClient;
     };
   
     init();
