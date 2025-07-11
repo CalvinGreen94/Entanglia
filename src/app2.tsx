@@ -9,45 +9,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import WalletConnectButton from './components/connectWallet';
 import { useWallet } from '@solana/wallet-adapter-react';
 import ChatWrapper from './components/ChatWrapper';
-import { useConnection } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { PublicKey, Transaction, SystemProgram, Keypair } from '@solana/web3.js';
-import {
-  TOKEN_PROGRAM_ID,
-  createInitializeMintInstruction,
-  createMintToInstruction,
-  getAssociatedTokenAddress,
-  createAssociatedTokenAccountInstruction,
-} from '@solana/spl-token';
-
-import {
-
-  TransactionInstruction,
-  ComputeBudgetProgram,
-  TransactionMessage, VersionedTransaction
-} from "@solana/web3.js";
-import { Connection } from "@solana/web3.js";
-import { createMint, getOrCreateAssociatedTokenAccount, mintTo, createCloseAccountInstruction, createTransferCheckedInstruction } from "@solana/spl-token";
-import { sendAndConfirmTransaction } from "@solana/web3.js";
-
-import assert from 'assert';
-import { getMint } from '@solana/spl-token';
-
-
-
-
-import * as spl from "@solana/spl-token";
-import { createBurnCheckedInstruction, TOKEN_2022_PROGRAM_ID, } from "@solana/spl-token";
-// import { swapie } from './swap'
-import bs58 from "bs58";
-
-// const CONNECTION = new Connection(RPC_ENDPOINT, {
-// 	commitment: providerOptions.commitment,
-// 	confirmTransactionInitialTimeout,
-// });
-// const fs = require('fs');
-
-
 
 const wallets = [new SolflareWalletAdapter(), new PhantomWalletAdapter()];
 
@@ -60,7 +21,8 @@ interface Match {
   quantum_contribution: number;
   final_prediction: number;
   match_scenario?: string;
-  // pq_signature?: string;
+  pq_signature?: string;
+  token_balance?: number;
   bio?: string;
   chat_token?: string;
   user_id: string;
@@ -73,8 +35,6 @@ interface Destination {
   lon: number;
 }
 
-
-
 function App() {
   const [name, setName] = useState('');
   const [traits, setTraits] = useState('');
@@ -84,23 +44,12 @@ function App() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [destinations, setDestinations] = useState<Destination[]>([]);
+  const { connected, publicKey } = useWallet();
   const [chatToken, setChatToken] = useState('');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [selectedDestination, setSelectedDestination] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
-
-
-  const { connection } = useConnection();
-  const { connected, publicKey, sendTransaction, disconnect } = useWallet();
-
-  const [mintAddress, setMintAddress] = useState<string | null>(null);
-  const [tokenAccountAddress, setTokenAccountAddress] = useState<string | null>(null);
-  const [mintSupply, setMintSupply] = useState<string | null>(null);
-  const [tokenAccountBalance, setTokenAccountBalance] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-
 
   useEffect(() => {
     if (publicKey) {
@@ -109,11 +58,6 @@ function App() {
       setWalletAddress(null);
     }
   }, [publicKey]);
-
-
-
-
-
 
   const fetchNearbyDestinations = async (): Promise<Destination[]> => {
     try {
@@ -152,12 +96,11 @@ function App() {
     }
   };
 
-
   const registerUser = async () => {
-    // if (!walletAddress) {
-    //   alert('Please connect your wallet to continue.');
-    //   return;
-    // }
+    if (!walletAddress) {
+      alert('Please connect your wallet to continue.');
+      return;
+    }
     if (!name || !traits || !imageBase64) {
       alert('Please fill in all fields and upload an image.');
       return;
@@ -179,8 +122,8 @@ function App() {
             bio,
             image_base64: imageBase64,
             nearby_places: nearby,
-            // wallet_address: walletAddress,
-            // pq_signature: 'generated_signature_here'
+            wallet_address: walletAddress,
+            pq_signature: 'generated_signature_here'
           },
         },
         id: 1,
@@ -224,7 +167,6 @@ function App() {
     }
   };
 
-
   const sendEmoji = (emoji: string) => {
     if (!selectedMatch) return;
     console.log(`Sending ${emoji} to ${selectedMatch.name}`);
@@ -233,7 +175,7 @@ function App() {
 
   return (
     <Router>
-      <ConnectionProvider endpoint="https://mainnet.helius-rpc.com/?api-key=83f096f4-4441-42b0-91eb-b82b478711e9">
+      <ConnectionProvider endpoint="https://api.mainnet-beta.solana.com">
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <div className="app-container">
@@ -242,10 +184,7 @@ function App() {
                 <p className="app-description">
                   Entanglia: The first matchmaking engine blending neural networks, quantum predictions & Solana. Find synergy, not swipes.
                 </p>
-                
-
                 <WalletConnectButton />
-                {/* <WalletMultiButton /> */}
                 <input className="input" placeholder="🧠 Enter Your Quantum Alias" value={name} onChange={(e) => setName(e.target.value)} />
                 <input className="input" placeholder="🔢 Describe Yourself (Traits)" value={traits} onChange={(e) => setTraits(e.target.value)} />
                 <textarea className="input" placeholder="📝 Add a short bio" value={bio} onChange={(e) => setBio(e.target.value)} />
@@ -303,21 +242,16 @@ function App() {
                         <p>🔮 Final Prediction: {match.final_prediction.toFixed(2)}</p>
                         <p>✨ Our matching system uses deep learning and probabilistic quantum models to uncover emergent synergy.</p>
                         {match.match_scenario && <p className="scenario-text">📝 {match.match_scenario}</p>}
+                        {match.token_balance !== undefined && match.token_balance < 5 && <p className="warning">⚠️ Unlock full access by holding 5+ ENT tokens</p>}
                         <button onClick={() => sendEmoji("❤️")} className="emoji-btn">❤️ Send Reaction</button>
 
                         {selectedMatch && chatToken && selectedMatch.user_id === match.user_id && (
                           <div style={{ marginTop: '2rem' }}>
                             <h2>💬 Chat with {selectedMatch.name}</h2>
                             <ChatWrapper
-                              key={selectedMatch.user_id}
                               currentUserId={userId}
                               currentUserToken={chatToken}
                               otherUserId={selectedMatch.user_id}
-                              matchInfo={{
-                                score: selectedMatch.score,
-                                keras: selectedMatch.keras_contribution,
-                                quantum: selectedMatch.quantum_contribution,
-                              }}
                             />
                           </div>
                         )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { StreamChat } from 'stream-chat';
 import {
   Chat,
@@ -10,57 +10,90 @@ import {
   LoadingIndicator,
 } from 'stream-chat-react';
 import 'stream-chat-react/dist/css/v2/index.css';
+import './ChatWrapper.css'; // optional custom styles
 
-const apiKey = 'cknfetvs4fdj'; // Replace with your real Stream API key
+const apiKey = 'cknfetvs4fdj';
 
 interface Props {
   currentUserId: string;
   currentUserToken: string;
   otherUserId: string;
+  matchInfo?: {
+    score: number;
+    keras: number;
+    quantum: number;
+  };
 }
 
-const ChatWrapper: React.FC<Props> = ({ currentUserId, currentUserToken, otherUserId }) => {
-  const [client, setClient] = useState<StreamChat | null>(null);
+const ChatWrapper: React.FC<Props> = ({
+  currentUserId,
+  currentUserToken,
+  otherUserId,
+  matchInfo,
+}) => {
+  const [clientReady, setClientReady] = useState(false);
   const [channel, setChannel] = useState<any>(null);
-
+  const [client, setClient] = useState<StreamChat | null>(null);
+  const chatClient = useRef(StreamChat.getInstance(apiKey));
   useEffect(() => {
-    const initChat = async () => {
-      const chatClient = StreamChat.getInstance(apiKey);
-
-      await chatClient.connectUser(
-        {
-          id: currentUserId,
-          name: `EntangliaUser${currentUserId}`,
-        },
+    const client = chatClient.current;
+    const sortedMembers = [currentUserId, otherUserId].sort();
+    const channelId = `entanglia-${sortedMembers[0]}-${sortedMembers[1]}`;
+  
+    const init = async () => {
+      await client.connectUser(
+        { id: currentUserId, name: `EntangliaUser${currentUserId}` },
         currentUserToken
       );
-
-      const newChannel = chatClient.channel('messaging', {
-        members: [currentUserId, otherUserId], // 1-on-1 channel
+  
+      const newChannel = client.channel('messaging', channelId, {
+        members: sortedMembers,
       });
-
+  
       await newChannel.watch();
-
-      setClient(chatClient);
       setChannel(newChannel);
+      setClientReady(true);
     };
-
-    initChat();
-
+  
+    init();
+  
     return () => {
-      if (client) client.disconnectUser();
+      client.disconnectUser();
     };
   }, [currentUserId, currentUserToken, otherUserId]);
+  
 
-  if (!client || !channel) return <LoadingIndicator />;
+  if (!clientReady || !channel) return <LoadingIndicator />;
+
+  const handleEmojiClick = (emoji: string) => {
+    channel.sendMessage({ text: emoji });
+  };
 
   return (
-    <Chat client={client} theme="str-chat__theme-light">
+    <Chat client={client!} theme="str-chat__theme-light">
       <Channel channel={channel}>
         <Window>
-          <ChannelHeader />
+          <div className="custom-chat-header">
+            <ChannelHeader />
+            {matchInfo && (
+              <div className="match-stats">
+                <p>💖 Score: {matchInfo.score.toFixed(2)}</p>
+                <p>🤖 AI: {matchInfo.keras.toFixed(2)}</p>
+                <p>🧠 Quantum: {matchInfo.quantum.toFixed(2)}</p>
+              </div>
+            )}
+          </div>
+
           <MessageList />
           <MessageInput />
+
+          <div className="emoji-bar">
+            <span onClick={() => handleEmojiClick('❤️')}>❤️</span>
+            <span onClick={() => handleEmojiClick('😂')}>😂</span>
+            <span onClick={() => handleEmojiClick('🔥')}>🔥</span>
+            <span onClick={() => handleEmojiClick('👍')}>👍</span>
+            <span onClick={() => handleEmojiClick('😎')}>😎</span>
+          </div>
         </Window>
       </Channel>
     </Chat>

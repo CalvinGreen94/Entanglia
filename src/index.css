@@ -79,4 +79,42 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+
+
+/* Token Minting Card */
+.token-card {
+  margin: 1.5rem 0;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  color: inherit;
+  transition: transform 0.2s;
+}
+
+.token-card:hover {
+  transform: translateY(-2px);
+}
+
+.token-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.token-card .input,
+.token-card .input-file,
+.token-card textarea {
+  margin-top: 0.75rem;
+}
+
+/* Optional: Add button alignment */
+.token-card .btn {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+
 }
