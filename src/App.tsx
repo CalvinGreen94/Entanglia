@@ -247,7 +247,7 @@ function App() {
                 <div style={{ marginTop: '2rem', marginBottom: '2rem', textAlign: 'center' }}>
                   <h2>More Options</h2>
                   <button className="btn" onClick={openSelectModal}>
-                    Select Reservation or Partnership
+                    Select Reservation from Entanglia Partners
                   </button>
                 </div>
 
