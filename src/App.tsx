@@ -59,7 +59,7 @@ function App() {
   const [selectedDestination, setSelectedDestination] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
   // const [modalOpen, setModalOpen] = useState(false);
-  const [selectedModalContent, setSelectedModalContent] = useState<'partnership' | 'reservations' | 'becca' | null>(null);
+  const [selectedModalContent, setSelectedModalContent] = useState<'partnership' | 'reservations' | 'becca' | 'nooks'|null>(null);
   // New states for two-step modal flow
   const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
   const [isIframeModalOpen, setIsIframeModalOpen] = useState(false);
@@ -81,7 +81,7 @@ function App() {
   // };
 
   // When user picks an option in first modal:
-  const handleOptionSelect = (option: 'partnership' | 'reservations' | 'becca') => {
+  const handleOptionSelect = (option: 'partnership' | 'reservations' | 'becca'| 'nooks') => {
     setSelectedModalContent(option);
     setIsSelectModalOpen(false);
     setIsIframeModalOpen(true);
@@ -300,6 +300,13 @@ function App() {
       </button>
       <br />
       <button
+        style={{ margin: '1rem', padding: '0.75rem 1.5rem' }}
+        onClick={() => handleOptionSelect('nooks')}
+      >
+        🌊 The Shack 'Nook' Reservation
+      </button>
+      <br />
+      <button
         onClick={closeSelectModal}
         style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#777', background: 'none', border: 'none', cursor: 'pointer' }}
       >
@@ -415,6 +422,28 @@ function App() {
           </iframe>
         </>
       )}
+
+{selectedModalContent === 'nooks' && (
+        <>
+          <h2>🌊 Reserve Your Spot at The Shack</h2>
+          <p>
+            Schedule your visit or event with The Shack Nook service by using the reservation system below.
+          </p>
+          <iframe
+            src="https://www.theshackvb.com/nooks"
+            width="100%"
+            height="750"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="The Shack Nook Reservations"
+          >
+            Loading…
+          </iframe>
+        </>
+      )}
+
+
     </div>
   </div>
 )}
