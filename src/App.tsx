@@ -309,7 +309,6 @@ function App() {
   </div>
 )}
 
-// In your iframe modal content render:
 
 {isIframeModalOpen && (
   <div
