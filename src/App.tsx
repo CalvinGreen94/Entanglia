@@ -59,7 +59,7 @@ function App() {
   const [selectedDestination, setSelectedDestination] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
   // const [modalOpen, setModalOpen] = useState(false);
-  const [selectedModalContent, setSelectedModalContent] = useState<'partnership' | 'reservations' | null>(null);
+  const [selectedModalContent, setSelectedModalContent] = useState<'partnership' | 'reservations' | 'becca' | null>(null);
   // New states for two-step modal flow
   const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
   const [isIframeModalOpen, setIsIframeModalOpen] = useState(false);
@@ -81,7 +81,7 @@ function App() {
   // };
 
   // When user picks an option in first modal:
-  const handleOptionSelect = (option: 'partnership' | 'reservations') => {
+  const handleOptionSelect = (option: 'partnership' | 'reservations' | 'becca') => {
     setSelectedModalContent(option);
     setIsSelectModalOpen(false);
     setIsIframeModalOpen(true);
@@ -253,145 +253,172 @@ function App() {
 
                 {/* === Step 1: Select Modal === */}
                 {isSelectModalOpen && (
-                  <div
-                    style={{
-                      position: 'fixed',
-                      top: 0,
-                      left: 0,
-                      width: '100vw',
-                      height: '100vh',
-                      backgroundColor: 'rgba(0,0,0,0.5)',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      zIndex: 9999,
-                    }}
-                    onClick={closeSelectModal}
-                  >
-                    <div
-                      style={{
-                        backgroundColor: '#fff',
-                        width: '320px',
-                        borderRadius: '8px',
-                        padding: '1.5rem',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-                        textAlign: 'center',
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <h2>Select an Option</h2>
-                      <button
-                        style={{ margin: '1rem', padding: '0.75rem 1.5rem' }}
-                        onClick={() => handleOptionSelect('partnership')}
-                      >
-                        🤝Aloft Chesapeake Event Reservation
-                      </button>
-                      <button
-                        style={{ margin: '1rem', padding: '0.75rem 1.5rem' }}
-                        onClick={() => handleOptionSelect('reservations')}
-                      >
-                        🏖️ Orion's Roof Event Reservation
-                      </button>
-                      <br />
-                      <button
-                        onClick={closeSelectModal}
-                        style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#777', background: 'none', border: 'none', cursor: 'pointer' }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
+  <div
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 9999,
+    }}
+    onClick={closeSelectModal}
+  >
+    <div
+      style={{
+        backgroundColor: '#fff',
+        width: '320px',
+        borderRadius: '8px',
+        padding: '1.5rem',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+        textAlign: 'center',
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h2>Select an Option</h2>
+      <button
+        style={{ margin: '1rem', padding: '0.75rem 1.5rem' }}
+        onClick={() => handleOptionSelect('partnership')}
+      >
+        🤝 Aloft Chesapeake Event Reservation
+      </button>
+      <button
+        style={{ margin: '1rem', padding: '0.75rem 1.5rem' }}
+        onClick={() => handleOptionSelect('reservations')}
+      >
+        🏖️ Orion's Roof Event Reservation
+      </button>
+      <button
+        style={{ margin: '1rem', padding: '0.75rem 1.5rem' }}
+        onClick={() => handleOptionSelect('becca')}
+      >
+        🌊 Becca VB Reservation
+      </button>
+      <br />
+      <button
+        onClick={closeSelectModal}
+        style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#777', background: 'none', border: 'none', cursor: 'pointer' }}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
 
-                {/* === Step 2: Iframe Modal === */}
-                {isIframeModalOpen && (
-                  <div
-                    style={{
-                      position: 'fixed',
-                      top: 0,
-                      left: 0,
-                      width: '100vw',
-                      height: '100vh',
-                      backgroundColor: 'rgba(0,0,0,0.5)',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      zIndex: 9999,
-                    }}
-                    onClick={closeIframeModal}
-                  >
-                    <div
-                      style={{
-                        backgroundColor: '#fff',
-                        width: '90%',
-                        maxWidth: '900px',
-                        maxHeight: '90vh',
-                        borderRadius: '8px',
-                        padding: '1rem',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-                        overflowY: 'auto',
-                        position: 'relative',
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        onClick={closeIframeModal}
-                        style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          fontSize: '1.5rem',
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                        }}
-                        aria-label="Close modal"
-                      >
-                        &times;
-                      </button>
+// In your iframe modal content render:
 
-                      {selectedModalContent === 'partnership' && (
-                        <>
-                          <h2>🏖️ Reserve Aloft Chesapeake Location</h2>
-                          <p>
-                          Ready to schedule your visit? Use the reservation system below to book your date and time at Aloft Chesapeake, Virginia.
-                          </p>
-                          <iframe
-                            src="https://forms.office.com/Pages/ResponsePage.aspx?id=K_4h7uf_uEydqW1yKrdWNSHavSFa3Y9Og3TxleIWksBUMkNJOTI2UFFMM1RCVVg2TFVSUVhKU1IzOC4u&embed=true"
-                            width="100%"
-                            height="700"
-                            frameBorder="0"
-                            marginHeight={0}
-                            marginWidth={0}
-                            title="Soft Launch Partnership Form"
-                          >
-                            Loading…
-                          </iframe>
-                        </>
-                      )}
+{isIframeModalOpen && (
+  <div
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 9999,
+    }}
+    onClick={closeIframeModal}
+  >
+    <div
+      style={{
+        backgroundColor: '#fff',
+        width: '90%',
+        maxWidth: '900px',
+        maxHeight: '90vh',
+        borderRadius: '8px',
+        padding: '1rem',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+        overflowY: 'auto',
+        position: 'relative',
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={closeIframeModal}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          fontSize: '1.5rem',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+        aria-label="Close modal"
+      >
+        &times;
+      </button>
 
-                      {selectedModalContent === 'reservations' && (
-                        <>
-                          <h2>🏖️ Reserve Your Spot at Orion's Roof on the Virignia Beach OceanFront</h2>
-                          <p>
-                            Ready to schedule your visit? Use the reservation system below to book your date and time at Orion's Roof in Virginia Beach.
-                          </p>
-                          <iframe
-                            src="https://orionsroofvb.com/reservations/"
-                            width="100%"
-                            height="750"
-                            frameBorder="0"
-                            marginHeight={0}
-                            marginWidth={0}
-                            title="Orion's Roof Reservations"
-                          >
-                            Loading…
-                          </iframe>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
+      {selectedModalContent === 'partnership' && (
+        <>
+          <h2>🏖️ Reserve Aloft Chesapeake Location</h2>
+          <p>
+            Ready to schedule your visit? Use the reservation system below to book your date and time at Aloft Chesapeake, Virginia.
+          </p>
+          <iframe
+            src="https://forms.office.com/Pages/ResponsePage.aspx?id=K_4h7uf_uEydqW1yKrdWNSHavSFa3Y9Og3TxleIWksBUMkNJOTI2UFFMM1RCVVg2TFVSUVhKU1IzOC4u&embed=true"
+            width="100%"
+            height="700"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="Soft Launch Partnership Form"
+          >
+            Loading…
+          </iframe>
+        </>
+      )}
+
+      {selectedModalContent === 'reservations' && (
+        <>
+          <h2>🏖️ Reserve Your Spot at Orion's Roof on the Virginia Beach OceanFront</h2>
+          <p>
+            Ready to schedule your visit? Use the reservation system below to book your date and time at Orion's Roof in Virginia Beach.
+          </p>
+          <iframe
+            src="https://orionsroofvb.com/reservations/"
+            width="100%"
+            height="750"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="Orion's Roof Reservations"
+          >
+            Loading…
+          </iframe>
+        </>
+      )}
+
+      {selectedModalContent === 'becca' && (
+        <>
+          <h2>🌊 Reserve Your Spot at Becca VB</h2>
+          <p>
+            Schedule your visit or event with Becca VB by using the reservation system below.
+          </p>
+          <iframe
+            src="https://www.beccavb.com/reservations"
+            width="100%"
+            height="750"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="Becca VB Reservations"
+          >
+            Loading…
+          </iframe>
+        </>
+      )}
+    </div>
+  </div>
+)}
 
 
                 {/* <WalletMultiButton /> */}
